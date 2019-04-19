@@ -4,7 +4,7 @@ var config = {
         host: 'localhost',
         user: 'root',
         password: 'root',
-        database: 'film',
+        database: 'db_film',
     },
     server: {
         host: '127.0.0.1',

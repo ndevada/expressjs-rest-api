@@ -24,6 +24,7 @@ app.get('/', async (req, res) => {
     }
 });
 
+// ANCHOR insert data
 app.post('/', [
     check('judul').not().isEmpty(),
     check('sinopsis').not().isEmpty(),
@@ -31,7 +32,7 @@ app.post('/', [
     check('tahun_tayang').not().isEmpty(),
 ], async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty()) { // NOTE cek apakah req sudah tervalidasi
         return res.status(422).json({ errors: errors.array() });
     }
     try {
@@ -58,6 +59,50 @@ app.post('/', [
         next(error);
     }
 
+});
+
+// ANCHOR update data
+app.put('/:id', [
+    check('id').isInt().not().isEmpty(),
+    check('judul').not().isEmpty(),
+    check('sinopsis').not().isEmpty(),
+    check('genre').not().isEmpty(),
+    check('tahun_tayang').not().isEmpty(),
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) { // NOTE cek apakah req sudah tervalidasi
+        return res.status(422).json({ errors: errors.array() });
+    }
+    try {
+        let id    = req.params.id;
+        let judul = req.body.judul;
+        let sinopsis = req.body.sinopsis;
+        let genre =    req.body.genre;
+        let  tahun_tayang = req.body.tahun_tayang;
+
+        let found = await knex('film').where('judul', judul).where('id', '!=', id).first();
+            if (found) {
+                res.status(409);
+                response.ok(409, 'Judul sudah ada!', res);
+            }else {
+                await knex('film').where('id', id).update({
+                    'judul': judul,
+                    'sinopsis': sinopsis,
+                    'genre':    genre,
+                    'tahun_tayang': tahun_tayang
+                });
+                res.json({
+                    id: id,
+                    judul,
+                    sinopsis,
+                    genre,
+                    tahun_tayang
+                });
+            }
+        } catch (error) {
+            logger.error(error.message);
+            next(error);
+        }
 });
 
 module.exports = app;

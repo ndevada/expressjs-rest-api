@@ -2,6 +2,8 @@
 const path = require('path');
 // ANCHOR express module
 const express = require('express');
+// ANCHOR body-parser
+const bodyParser = require('body-parser');
 const config = require('./config/config');
 const app = express();
 

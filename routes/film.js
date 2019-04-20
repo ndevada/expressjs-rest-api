@@ -105,4 +105,22 @@ app.put('/:id', [
         }
 });
 
+// ANCHOR find data
+app.get('/:id', async (req, res) => {
+    try {
+        let id = req.params.id;
+        let pemilik = await knex('film').where('id', id).first();
+            if (!pemilik) {
+                res.status(404);
+                response.ok(404, 'Data tidak ditemukan', res);
+            }else {
+                res.status(200);
+                response.ok(200, pemilik, res);
+            }
+    } catch (error) {
+        logger.error(error.message);
+        next(error);
+    }
+});
+
 module.exports = app;

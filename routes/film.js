@@ -123,4 +123,23 @@ app.get('/:id', async (req, res) => {
     }
 });
 
+// ANCHOR delete data
+app.delete('/:id', async (req, res) => {
+    try {
+        let id = req.params.id;
+        let pemilik = await knex('film').where('id', id).first();
+        if (!pemilik) {
+            res.status(404);
+            response.ok(404, 'Data tidak ditemukan', res);
+        }else {
+            await knex('film').where('id', id).del();
+            res.status(200);
+            response.ok(200, 'Data berhasil dihapus', res);
+        }
+    } catch (error) {
+        logger.error(error.message);
+        next(error);
+    }
+});
+
 module.exports = app;
